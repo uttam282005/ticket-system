@@ -116,5 +116,5 @@ go vet ./...
 
 ## 8. Deployment
 
-- **Base URL**: https://ticket-booking-system-g1xe.onrender.com/
-- **Health Check URL**: https://ticket-booking-system-g1xe.onrender.com/health
+- **Base URL**: https://ticket-system-bd4s.onrender.com/
+- **Health Check URL**: https://ticket-system-bd4s.onrender.com/health
