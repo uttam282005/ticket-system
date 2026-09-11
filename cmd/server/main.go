@@ -13,6 +13,7 @@ import (
 	"ticket-system/internal/handlers"
 	"ticket-system/internal/middleware"
 	"ticket-system/internal/store"
+	"ticket-system/web"
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
@@ -70,6 +71,9 @@ func main() {
 		pr.Get("/tickets/{id}", ticketHandler.GetTicket)
 		pr.Patch("/tickets/{id}/status", ticketHandler.UpdateStatus)
 	})
+
+	// Web UI handler for root and static assets
+	r.Handle("/*", web.Handler())
 
 	// Server address is strictly hardcoded to :8080 per specification
 	server := &http.Server{

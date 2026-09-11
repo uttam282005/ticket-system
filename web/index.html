@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Tickets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div id="app" class="ledger-shell">
+    <header class="top-bar">
+      <div class="top-bar-inner">
+        <a href="#/" class="brand-link" id="brand-link">Tickets</a>
+        <nav class="top-nav" aria-label="Main Navigation">
+          <span id="user-email" class="user-email" aria-live="polite"></span>
+          <button type="button" id="theme-toggle" class="text-link-btn" aria-label="Toggle dark mode">Dark</button>
+          <button type="button" id="top-new-ticket-btn" class="btn btn-primary btn-sm hidden">+ New ticket</button>
+          <button type="button" id="sign-out-btn" class="text-link-btn hidden">Sign out</button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content" class="content-container">
+      <!-- Auth Screen (Sign In / Register) -->
+      <section id="auth-view" class="view auth-view" aria-labelledby="auth-title">
+        <div class="auth-card">
+          <h1 id="auth-title" class="page-title">Sign in</h1>
+          
+          <form id="auth-form" class="auth-form" novalidate>
+            <div class="form-group">
+              <label for="auth-email">Email</label>
+              <input type="email" id="auth-email" name="email" required autocomplete="email" placeholder="name@example.com">
+              <div id="auth-email-error" class="field-error" aria-live="polite"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="auth-password">Password</label>
+              <input type="password" id="auth-password" name="password" required autocomplete="current-password" placeholder="••••••••">
+              <div id="auth-password-error" class="field-error" aria-live="polite"></div>
+            </div>
+
+            <div id="auth-general-error" class="form-error" aria-live="assertive"></div>
+
+            <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block">Sign in</button>
+          </form>
+
+          <div class="auth-toggle">
+            <button type="button" id="auth-mode-toggle" class="text-link-btn">No account? Create one</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ticket List Screen -->
+      <section id="tickets-view" class="view tickets-view hidden" aria-labelledby="tickets-header-title">
+        <div class="section-header">
+          <h1 id="tickets-header-title" class="page-title">Tickets</h1>
+          <button type="button" id="open-new-ticket-btn" class="btn btn-primary btn-sm">+ New ticket</button>
+        </div>
+
+        <!-- Inline New Ticket Panel -->
+        <div id="new-ticket-panel" class="new-ticket-panel collapsed" aria-hidden="true">
+          <div class="panel-header">
+            <h2 class="section-label">New ticket</h2>
+            <button type="button" id="cancel-new-ticket-btn" class="text-link-btn">Cancel</button>
+          </div>
+          <form id="new-ticket-form" novalidate>
+            <div class="form-group">
+              <label for="ticket-title">Title</label>
+              <input type="text" id="ticket-title" name="title" required placeholder="What needs attention?">
+              <div id="ticket-title-error" class="field-error" aria-live="polite"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="ticket-description">Description <span class="optional-label">(optional)</span></label>
+              <textarea id="ticket-description" name="description" rows="3" placeholder="Context, reproduction steps, or details..."></textarea>
+            </div>
+
+            <div id="new-ticket-general-error" class="form-error" aria-live="assertive"></div>
+
+            <div class="panel-actions">
+              <button type="submit" id="create-ticket-btn" class="btn btn-primary">Create ticket</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Ticket Rows List -->
+        <div id="ticket-list" class="ticket-list" role="list">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state hidden">
+          <p class="empty-message">No tickets yet.</p>
+          <button type="button" id="empty-new-ticket-btn" class="btn btn-primary btn-sm">+ New ticket</button>
+        </div>
+      </section>
+
+      <!-- Ticket Detail Screen -->
+      <section id="detail-view" class="view detail-view hidden" aria-labelledby="detail-title">
+        <div class="detail-nav">
+          <button type="button" id="back-to-tickets-btn" class="text-link-btn">← Tickets</button>
+        </div>
+
+        <div class="detail-header">
+          <div class="detail-title-group">
+            <h1 id="detail-title" class="page-title"></h1>
+            <div class="detail-meta">
+              <span id="detail-id" class="meta-data"></span>
+              <span class="meta-sep">·</span>
+              <span id="detail-timestamp" class="meta-data"></span>
+            </div>
+          </div>
+          <div class="detail-status-pill">
+            <span id="detail-status-dot" class="status-dot"></span>
+            <span id="detail-status-text" class="status-text mono"></span>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h2 class="section-label">Description</h2>
+          <hr class="hairline-divider">
+          <div id="detail-description" class="detail-description-body"></div>
+        </div>
+
+        <div class="detail-actions">
+          <button type="button" id="detail-action-btn" class="btn btn-primary hidden"></button>
+          <p id="detail-closed-notice" class="closed-notice hidden">This ticket is closed.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
