@@ -1,0 +1,12 @@
+# Binaries
+server
+*.exe
+*.test
+
+# Environment files
+.env
+
+# OS/Editor
+.DS_Store
+.idea/
+.vscode/
