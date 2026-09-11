@@ -10,3 +10,7 @@
 .DS_Store
 .idea/
 .vscode/
+
+# Spec
+SPEC.md
+UI-SPEC.md
