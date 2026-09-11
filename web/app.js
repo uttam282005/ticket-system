@@ -64,6 +64,7 @@
     detailStatusText: document.getElementById('detail-status-text'),
     detailDescription: document.getElementById('detail-description'),
     detailActionBtn: document.getElementById('detail-action-btn'),
+    detailCloseDirectBtn: document.getElementById('detail-close-direct-btn'),
     detailClosedNotice: document.getElementById('detail-closed-notice'),
   };
 
@@ -436,14 +437,19 @@
       elements.detailActionBtn.textContent = 'Mark in progress';
       elements.detailActionBtn.classList.remove('hidden');
       elements.detailActionBtn.disabled = false;
+      elements.detailCloseDirectBtn.classList.remove('hidden');
+      elements.detailCloseDirectBtn.disabled = false;
+      elements.detailCloseDirectBtn.textContent = 'Close ticket';
       elements.detailClosedNotice.classList.add('hidden');
     } else if (ticket.status === 'in_progress') {
       elements.detailActionBtn.textContent = 'Mark closed';
       elements.detailActionBtn.classList.remove('hidden');
       elements.detailActionBtn.disabled = false;
+      elements.detailCloseDirectBtn.classList.add('hidden');
       elements.detailClosedNotice.classList.add('hidden');
     } else {
       elements.detailActionBtn.classList.add('hidden');
+      elements.detailCloseDirectBtn.classList.add('hidden');
       elements.detailClosedNotice.classList.remove('hidden');
     }
   }
@@ -486,6 +492,37 @@
       alert(`Failed to update status: ${err.message}`);
       elements.detailActionBtn.disabled = false;
       elements.detailActionBtn.textContent = originalText;
+    }
+  }
+
+  async function handleDetailCloseDirectAction() {
+    const ticket = state.currentTicket;
+    if (!ticket || ticket.status !== 'open') return;
+
+    elements.detailCloseDirectBtn.disabled = true;
+    elements.detailActionBtn.disabled = true;
+    elements.detailCloseDirectBtn.textContent = 'Closing…';
+
+    try {
+      const updated = await api(`/tickets/${ticket.id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: 'closed' }),
+      });
+
+      state.currentTicket = updated;
+      const idx = state.tickets.findIndex((t) => t.id === updated.id);
+      if (idx !== -1) {
+        state.tickets[idx] = updated;
+      }
+
+      setTimeout(() => {
+        renderTicketDetail();
+      }, 200);
+    } catch (err) {
+      alert(`Failed to close ticket: ${err.message}`);
+      elements.detailCloseDirectBtn.disabled = false;
+      elements.detailActionBtn.disabled = false;
+      elements.detailCloseDirectBtn.textContent = 'Close ticket';
     }
   }
 
@@ -534,6 +571,7 @@
     });
 
     elements.detailActionBtn.addEventListener('click', handleDetailStatusAction);
+    elements.detailCloseDirectBtn.addEventListener('click', handleDetailCloseDirectAction);
   }
 
   // --- App Initialization ---

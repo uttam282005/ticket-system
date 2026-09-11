@@ -203,6 +203,17 @@ a:focus-visible {
   color: var(--btn-text);
 }
 
+.btn-secondary {
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .btn-sm {
   padding: 5px 12px;
   font-size: 14px;
@@ -526,6 +537,9 @@ textarea:focus {
 }
 
 .detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 32px;
 }
 
