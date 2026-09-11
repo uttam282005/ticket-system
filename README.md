@@ -12,6 +12,7 @@ A production-ready RESTful ticket management service implemented in Go and Postg
 - **Security**: Passwords hashed with [`bcrypt`](https://pkg.go.dev/golang.org/x/crypto/bcrypt) (cost factor 10). Password hashes are never exposed in any API response or logs.
 - **Ownership Isolation**: Every ticket read and write query enforces `WHERE user_id = $2` at the database SQL query level. Requests for non-existent tickets or tickets owned by other users return `404 Not Found` (never `403`), preventing ID enumeration.
 - **Status Lifecycle**: Once a ticket is `closed`, no further status changes are allowed (attempts return `409 Conflict`). Direct transitions (such as `open` → `closed`) and non-closed updates are supported.
+- **Architecture Documentation**: See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design decisions, security threat modeling, and sequence diagrams.
 
 ---
 
